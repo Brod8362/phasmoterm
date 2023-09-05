@@ -1,0 +1,20 @@
+[ghosts.spirit]
+name = "Spirit"
+min_speed = 1.7
+min_hunt_sanity = 50
+evidence = [0,6,5]
+description = "Incense prevents hunt for 180s instead of 90"
+
+[ghosts.wraith]
+name = "Wraith"
+min_speed = 1.7
+min_hunt_sanity = 50
+evidence = [0,6,1]
+description = "Will not step in salt.\nCan randomly teleport to player, leaving EMF 2 or 5"
+
+[ghosts.phantom]
+name = "Phantom"
+min_speed = 1.7
+min_hun_sanity = 50
+evidence = [6,2,1]
+description = "Will not appear in ghost photos\nLess visible during hunts"

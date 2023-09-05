@@ -1,6 +1,7 @@
+use serde::Deserialize;
 
 #[repr(usize)]
-#[derive(Copy, Clone, PartialEq)]
+#[derive(Copy, Clone, PartialEq, Deserialize)]
 pub enum Evidence {
     EMF = 0,
     DOTS = 1,

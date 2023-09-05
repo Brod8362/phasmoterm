@@ -9,7 +9,8 @@ pub enum MarkState {
 
 pub struct SelectionState {
     evidences: [MarkState; 7],
-    difficulty: u32
+    difficulty: u32,
+    smudge_timer: u32
 }
 
 impl SelectionState {
@@ -25,7 +26,8 @@ impl SelectionState {
         ];
         Self {
             evidences: states,
-            difficulty: 3
+            difficulty: 3,
+            smudge_timer: 0
         }
     }
 
@@ -47,6 +49,7 @@ impl SelectionState {
         self.evidences[evidence as usize]
     }
 
+    //whether or not an evidence is possible given current criteria
     pub fn possible(self: &Self, evidence: Evidence) -> bool {
         //TODO
         self.evidences[evidence as usize] == MarkState::Positive
@@ -69,6 +72,8 @@ impl SelectionState {
             }
         }
     }
+    
+    // Difficulty handling
 
     pub fn next_difficulty(self: &mut Self) {
         match self.difficulty {
@@ -83,5 +88,19 @@ impl SelectionState {
 
     pub fn current_difficulty(self: &Self) -> u32 {
         self.difficulty
+    }
+
+    //Smudge timer
+
+    pub fn start_smudge(self: &mut Self) {
+        self.smudge_timer = 180;
+    }
+
+    pub fn tick_smudge(self: &mut Self) {
+        self.smudge_timer -= 1;
+    }
+    
+    pub fn smudge_remaining(self: &mut Self) -> u32 {
+        self.smudge_timer
     }
 }
