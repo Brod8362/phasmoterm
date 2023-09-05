@@ -44,6 +44,7 @@ fn main() -> Result<(), io::Error> {
                 KeyCode::Char('g') => state.toggle(Evidence::GhostOrbs),
                 KeyCode::Char('w') => state.toggle(Evidence::Writing),
                 KeyCode::Char('s') => state.toggle(Evidence::SpiritBox),
+                KeyCode::Char('i') => state.next_difficulty(),
                 _ => {}
             }
         }
@@ -149,7 +150,8 @@ fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>, state: &Selec
             } else if i == 7 {
                 this_row_vec.push(Cell::from(""));
             } else if i == 8 {
-                this_row_vec.push(Cell::from("Ev(i)dences: TODO"));
+                
+                this_row_vec.push(Cell::from(format!("Ev(i)dences: {}", state.current_difficulty())));
             }
             
         }
