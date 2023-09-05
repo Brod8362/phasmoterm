@@ -11,3 +11,13 @@ pub enum Evidence {
     Writing = 5,
     SpiritBox = 6
 }
+
+pub const ALL: [Evidence; 7] = [
+    Evidence::EMF,
+    Evidence::DOTS,
+    Evidence::Ultraviolet,
+    Evidence::Freezing,
+    Evidence::GhostOrbs,
+    Evidence::Writing,
+    Evidence::SpiritBox
+];

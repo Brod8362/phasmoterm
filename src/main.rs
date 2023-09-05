@@ -7,7 +7,7 @@ use evidence::Evidence;
 use ghosts::Ghost;
 use ratatui::{
     backend::CrosstermBackend,
-    widgets::{Block, Borders, ListItem, List, Paragraph, Gauge, Table, Cell, Row},
+    widgets::{Block, Borders, ListItem, List, Paragraph, Gauge, Table, Cell, Row, Wrap},
     Terminal, prelude::{Direction, Layout, Backend, Constraint, Rect}, Frame, style::{Style, Color, Stylize}
 };
 use crossterm::{
@@ -133,15 +133,27 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>)
             Constraint::Percentage(60)
         ].as_ref())
         .split(main_layout[2]);
+
+    let possible_ghosts = state.possible_ghosts(ghosts);
     
-    let ghost_names_elems: Vec<ListItem> = ghosts.iter().map(|k| ListItem::new(k.name.clone())).collect();
+    let ghost_names_elems: Vec<ListItem> = possible_ghosts.iter().map(|k| ListItem::new(k.name.clone())).collect();
     let ghost_names_list = List::new(ghost_names_elems)
         .block(Block::default().title("Ghosts").borders(Borders::ALL))
         .highlight_style(Style::default().bold())
         .highlight_symbol("> ");
 
-    let ghost_evidence_box = Paragraph::new(ghosts[0].description.clone())
-        .block(Block::default().title("Ghost Information").borders(Borders::ALL));
+    
+    let paragraph_text = if possible_ghosts.is_empty() {
+        String::from("No possible ghosts given current restrictions")
+    } else {
+        possible_ghosts[0].description.clone()
+    };
+
+    let ghost_evidence_box = Paragraph::new(paragraph_text)
+        .block(Block::default()
+        .title("Ghost Information")
+        .borders(Borders::ALL))
+        .wrap(Wrap { trim: false});
     f.render_widget(ghost_names_list, ghost_layout[0]);
     f.render_widget(ghost_evidence_box, ghost_layout[1]);
 

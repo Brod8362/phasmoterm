@@ -1,4 +1,4 @@
-use crate::evidence::Evidence;
+use crate::{evidence::Evidence, ghosts::Ghost};
 
 #[derive(Copy, Clone, PartialEq)]
 pub enum MarkState {
@@ -71,6 +71,27 @@ impl SelectionState {
                 self.evidences[evidence as usize] = MarkState::Neutral;
             }
         }
+    }
+
+    pub fn possible_ghosts<'a>(self: &'a Self, ghosts: &'a Vec<Ghost>) -> Vec<&'a Ghost> {
+        let valid: Vec<&Ghost> = ghosts.iter().filter(|ghost| {
+            //check all evidences against the mark state
+            for e in crate::evidence::ALL {
+                let mark_state = self.evidences[e as usize];
+                if mark_state == MarkState::Positive {
+                    if !ghost.has_evidence(e) {
+                        return false;
+                    }
+                }
+                if mark_state == MarkState::Negative && self.difficulty == 3 {
+                    if ghost.has_evidence(e) {
+                        return false;
+                    }
+                }
+            }
+            true
+        }).collect();
+        valid
     }
     
     // Difficulty handling
