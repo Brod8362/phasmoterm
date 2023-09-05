@@ -2,8 +2,9 @@ pub mod evidence;
 pub mod ghosts; 
 pub mod state;
 
-use std::io;
+use std::{io, fs, collections::HashMap};
 use evidence::Evidence;
+use ghosts::Ghost;
 use ratatui::{
     backend::CrosstermBackend,
     widgets::{Block, Borders, ListItem, List, Paragraph, Gauge, Table, Cell, Row},
@@ -14,9 +15,45 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use serde::{de::IntoDeserializer, Deserializer, Deserialize};
 use state::{SelectionState, MarkState};
+use toml::{value::Array, Value};
+
+#[derive(Deserialize)]
+struct GhostDocument {
+    ghosts: HashMap<String, Ghost>
+}
 
 fn main() -> Result<(), io::Error> {
+    let ghost_file_paths = ["./ghosts.toml"];
+
+    let mut ghosts: Vec<Ghost> = Vec::new();
+
+    for path in ghost_file_paths {
+        println!("trying {}", path);
+        match fs::read_to_string(path) {
+            Ok(content) => {
+                println!("found at {}", path);
+                
+                match toml::from_str::<GhostDocument>(&content) {
+                    Ok(table) => {
+                        table.ghosts.values().for_each(|k| ghosts.push(k.clone()));
+                        break;
+                    },
+                    Err(e) => {
+                        println!("failed to parse {}: {}", path, e);
+                    }
+                }
+            },
+            _ => {} //file not found - continue
+        }
+    }
+
+    if ghosts.is_empty() {
+        println!("no ghost data found");
+        return Ok(());
+    }
+
     // setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
@@ -24,14 +61,11 @@ fn main() -> Result<(), io::Error> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-
     let mut state = SelectionState::new();
 
-    // Start a thread to discard any input events. Without handling events, the
-    // stdin buffer will fill up, and be read into the shell when the program exits.
     loop {
         terminal.draw(|f| {
-            ui(f, &state);
+            ui(f, &state, &ghosts);
         })?;
 
         if let Event::Key(key) = event::read()? {
@@ -63,7 +97,7 @@ fn main() -> Result<(), io::Error> {
     Ok(())
 }
 
-fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState) {
+fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>) {
     let main_layout = Layout::default()
         .direction(Direction::Vertical)
         .margin(1)
