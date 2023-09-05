@@ -7,7 +7,7 @@ use evidence::Evidence;
 use ghosts::Ghost;
 use ratatui::{
     backend::CrosstermBackend,
-    widgets::{Block, Borders, ListItem, List, Paragraph, Gauge, Table, Cell, Row, Wrap},
+    widgets::{Block, Borders, ListItem, List, Paragraph, Gauge, Table, Cell, Row, Wrap, ListState},
     Terminal, prelude::{Direction, Layout, Backend, Constraint, Rect}, Frame, style::{Style, Color, Stylize}
 };
 use crossterm::{
@@ -61,11 +61,13 @@ fn main() -> Result<(), io::Error> {
     let mut terminal = Terminal::new(backend)?;
 
     let mut state = SelectionState::new();
+    let mut list_state = ListState::default();
+    list_state.select(Some(0));
 
     let mut time = SystemTime::now();
     loop {
         terminal.draw(|f| {
-            ui(f, &state, &ghosts);
+            ui(f, &state, &ghosts, &mut list_state);
         })?;
 
         let now = SystemTime::now();
@@ -89,6 +91,30 @@ fn main() -> Result<(), io::Error> {
                     KeyCode::Char('i') => state.next_difficulty(),
                     KeyCode::Char('t') => state.start_smudge(),
                     KeyCode::Char('r') => state.reset(),
+                    KeyCode::Down => {
+                        match list_state.selected() {
+                            Some(s) => list_state.select(Some(s+1)),
+                            _ => list_state.select(Some(0))
+                        }
+                    },
+                    KeyCode::PageDown => {
+                        match list_state.selected() {
+                            Some(s) => list_state.select(Some(s+10)),
+                            _ => list_state.select(Some(0))
+                        }
+                    },
+                    KeyCode::Up => {
+                        match list_state.selected() {
+                            Some(s) if s > 0 => list_state.select(Some(s-1)),
+                            _ => list_state.select(Some(0))
+                        }
+                    },
+                    KeyCode::PageUp => {
+                        match list_state.selected() {
+                            Some(s) if s >= 10 => list_state.select(Some(s-10)),
+                            _ => list_state.select(Some(0))
+                        }
+                    },
                     _ => {}
                 }
             }
@@ -108,7 +134,7 @@ fn main() -> Result<(), io::Error> {
     Ok(())
 }
 
-fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>) {
+fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>, list_state: &mut ListState) {
     let main_layout = Layout::default()
         .direction(Direction::Vertical)
         .margin(1)
@@ -122,6 +148,10 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>)
         .split(f.size());
 
     let possible_ghosts = state.possible_ghosts(ghosts);
+
+    //make sure our selected list state is within the range of possible ghosts
+    let selected_index = list_state.selected().unwrap_or_default();
+    list_state.select(Some(usize::clamp(selected_index, 0, possible_ghosts.len()-1)));
 
     //render evidences
 
@@ -158,11 +188,13 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>)
         .highlight_style(Style::default().bold())
         .highlight_symbol("> ");
 
-    
     let paragraph_text = if possible_ghosts.is_empty() {
         String::from("No possible ghosts given current restrictions")
     } else {
-        possible_ghosts[0].description.clone()
+        match list_state.selected() {
+            Some(i) => String::from(possible_ghosts[i].description.clone()),
+            _ => String::from("No ghost selected")
+        }
     };
 
     let ghost_evidence_box = Paragraph::new(paragraph_text)
@@ -170,7 +202,7 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>)
         .title("Ghost Information")
         .borders(Borders::ALL))
         .wrap(Wrap { trim: false});
-    f.render_widget(ghost_names_list, ghost_layout[0]);
+    f.render_stateful_widget(ghost_names_list, ghost_layout[0], list_state);
     f.render_widget(ghost_evidence_box, ghost_layout[1]);
 
 }
