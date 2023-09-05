@@ -202,16 +202,16 @@ fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>, state: &Selec
             if i <= 6 {
                 let evidence_info = &data[i];
                 let s = match state.marked(evidence_info.0) {
-                    MarkState::Positive => "[x] ",
-                    MarkState::Neutral => "[ ] ",
-                    MarkState::Negative => "[-] "
+                    MarkState::Positive => "[✓]",
+                    MarkState::Neutral => "[ ]",
+                    MarkState::Negative => "[✗]"
                 };
-                let label = format!{"{}{}", s, evidence_info.1};
+                let label = format!{"{} {}", s, evidence_info.1};
                 let is_possible = evidence_info.0.possible(possible_ghosts);
                 let style = if is_possible {
                     Style::default().fg(evidence_info.2).bold()
                 } else {
-                    Style::default().fg(Color::Gray).crossed_out().slow_blink()
+                    Style::default().fg(Color::Gray).crossed_out()
                 };
                 
                 this_row_vec.push(Cell::from(label).style(style));

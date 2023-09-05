@@ -64,9 +64,7 @@ impl SelectionState {
     pub fn toggle(self: &mut Self, evidence: Evidence) {
         match self.evidences[evidence as usize] {
             MarkState::Neutral => {
-                if self.mimic_possible() && evidence == Evidence::GhostOrbs {
-                    self.evidences[evidence as usize] = MarkState::Positive;
-                } else if self.selected_count() < self.difficulty as usize {
+                if self.mimic_possible() || self.selected_count() < self.difficulty as usize {
                     self.evidences[evidence as usize] = MarkState::Positive;
                 } else {
                     self.evidences[evidence as usize] = MarkState::Negative;
