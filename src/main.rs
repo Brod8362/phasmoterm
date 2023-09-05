@@ -1,8 +1,8 @@
 use std::{io::{self, Stdout}, thread, time::Duration};
 use ratatui::{
     backend::CrosstermBackend,
-    widgets::{Block, Borders, ListItem, List, Paragraph, Gauge},
-    Terminal, prelude::{Direction, Layout, Backend, Constraint}, Frame, style::{Style, Color}
+    widgets::{Block, Borders, ListItem, List, Paragraph, Gauge, Table, Cell, Row},
+    Terminal, prelude::{Direction, Layout, Backend, Constraint, Rect}, Frame, style::{Style, Color, Stylize}
 };
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture},
@@ -50,8 +50,8 @@ fn ui<B: Backend>(f: &mut Frame<B>) {
         .margin(1)
         .constraints(
             [
-                Constraint::Percentage(10),
-                Constraint::Percentage(10),
+                Constraint::Min(5),
+                Constraint::Min(5),
                 Constraint::Percentage(80),
             ].as_ref()
         )
@@ -59,10 +59,7 @@ fn ui<B: Backend>(f: &mut Frame<B>) {
 
     //render evidences
 
-    let evidences = Block::default()
-        .title("Ev(i)dences")
-        .borders(Borders::ALL);
-    f.render_widget(evidences, main_layout[0]);
+    render_evidence_table(main_layout[0], f);
 
     // smudge timer
 
@@ -86,10 +83,38 @@ fn ui<B: Backend>(f: &mut Frame<B>) {
     
     let ghost_names_elems = [ListItem::new("Spirit"), ListItem::new("The Mimic"), ListItem::new("Hantu")];
     let ghost_names_list = List::new(ghost_names_elems)
-        .block(Block::default().title("Ghosts").borders(Borders::ALL));
+        .block(Block::default().title("Ghosts").borders(Borders::ALL))
+        .highlight_style(Style::default().bold())
+        .highlight_symbol("> ");
     let ghost_evidence_box = Paragraph::new("blah blah placeholder text")
         .block(Block::default().title("Ghost Information").borders(Borders::ALL));
     f.render_widget(ghost_names_list, ghost_layout[0]);
     f.render_widget(ghost_evidence_box, ghost_layout[1]);
 
+}
+
+fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>) {
+    // 3x3 grid even though we only use 7 of the slots
+    let table = Table::new(vec![
+        Row::new(vec![
+            Cell::from("[ ] (E)MF 5").style(Style::default().fg(Color::Red).bold()),
+            Cell::from("[ ] (D).O.T.S").style(Style::default().fg(Color::Green).bold()),
+            Cell::from("[ ] (U)V").style(Style::default().fg(Color::Magenta).bold())
+        ]),
+        Row::new(vec![
+            Cell::from("[ ] (F)reezing").style(Style::default().fg(Color::LightCyan).bold()),
+            Cell::from("[ ] (G)host Orbs").style(Style::default().fg(Color::Yellow).bold()),
+            Cell::from("[ ] (W)riting").style(Style::default().fg(Color::Blue)).bold(),
+        ]),
+        Row::new(vec![
+            Cell::from("[ ] (S)pirit Box").style(Style::default().fg(Color::LightRed)).bold(),
+            Cell::from(""), //blank spacer cell
+            Cell::from("3 Evidences").style(Style::default().fg(Color::White)),
+        ])
+    ])
+    .block(Block::default().title("Ev(i)dence").borders(Borders::ALL))
+    .widths(&[Constraint::Percentage(33), Constraint::Percentage(33), Constraint::Percentage(33)]);
+
+    f.render_widget(table, area);
+    
 }
