@@ -8,7 +8,7 @@ use ghosts::Ghost;
 use ratatui::{
     backend::CrosstermBackend,
     widgets::{Block, Borders, ListItem, List, Paragraph, Gauge, Table, Cell, Row, Wrap, ListState},
-    Terminal, prelude::{Direction, Layout, Backend, Constraint, Rect}, Frame, style::{Style, Color, Stylize}
+    Terminal, prelude::{Direction, Layout, Backend, Constraint, Rect}, Frame, style::{Style, Color, Stylize}, text::{Span, Line}
 };
 use crossterm::{
     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
@@ -184,7 +184,21 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>,
         .split(main_layout[2]);
     
     let ghost_names_elems: Vec<ListItem> = possible_ghosts.iter()
-        .map(|k| ListItem::new(k.name.clone()))
+        .map(|g| {
+            let mut spans = Vec::new();
+            spans.push(Span::from(format!("{} ( ",g.name.clone())));
+            for e in &g.evidence {
+                let mut s = Span::from(format!("{} ",e.symbol())).fg(e.color());
+                if state.marked(*e) == MarkState::Positive {
+                    s = s.bold();
+                };
+                spans.push(
+                   s
+                );
+            }
+            spans.push(Span::from(")"));
+            ListItem::new(Line::from(spans))
+        })
         .collect();
     
     let ghost_names_list = List::new(ghost_names_elems)
