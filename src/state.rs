@@ -50,12 +50,6 @@ impl SelectionState {
         self.evidences[evidence as usize]
     }
 
-    //whether or not an evidence is possible given current criteria
-    pub fn possible(self: &Self, evidence: Evidence) -> bool {
-        //TODO
-        self.evidences[evidence as usize] == MarkState::Positive
-    }
-
     fn mimic_possible(self: &Self) -> bool {
         // this exists for mimic handling logic
         // mimic wlil never show DOTS, writing, or EMF5

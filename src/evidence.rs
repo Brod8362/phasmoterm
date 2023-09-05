@@ -1,5 +1,7 @@
 use serde::Deserialize;
 
+use crate::ghosts::Ghost;
+
 #[repr(usize)]
 #[derive(Copy, Clone, PartialEq, Deserialize)]
 pub enum Evidence {
@@ -21,3 +23,9 @@ pub const ALL: [Evidence; 7] = [
     Evidence::Writing,
     Evidence::SpiritBox
 ];
+
+impl Evidence {
+    pub fn possible(self: &Self, possible_ghosts: &Vec<&Ghost>) -> bool {
+        possible_ghosts.iter().find(|g| g.has_evidence(self.clone())).is_some()
+    }
+}

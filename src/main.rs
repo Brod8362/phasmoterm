@@ -121,9 +121,11 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>)
         )
         .split(f.size());
 
+    let possible_ghosts = state.possible_ghosts(ghosts);
+
     //render evidences
 
-    render_evidence_table(main_layout[0], f, state);
+    render_evidence_table(main_layout[0], f, state, &possible_ghosts);
 
     // smudge timer
 
@@ -146,8 +148,6 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>)
             Constraint::Percentage(60)
         ].as_ref())
         .split(main_layout[2]);
-
-    let possible_ghosts = state.possible_ghosts(ghosts);
     
     let ghost_names_elems: Vec<ListItem> = possible_ghosts.iter()
         .map(|k| ListItem::new(k.name.clone()))
@@ -175,7 +175,7 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>)
 
 }
 
-fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>, state: &SelectionState) {
+fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>, state: &SelectionState, possible_ghosts: &Vec<&Ghost>) {
     // 3x3 grid even though we only use 7 of the slots
     let data = vec![
         (Evidence::EMF, "(E)MF 5", Color::Red),
@@ -184,7 +184,7 @@ fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>, state: &Selec
         (Evidence::Freezing, "(F)reezing", Color::LightCyan),
         (Evidence::GhostOrbs, "(G)host Orbs", Color::Yellow),
         (Evidence::Writing, "(W)riting", Color::Blue),
-        (Evidence::SpiritBox, "(S)pirit Box", Color::LightRed)
+        (Evidence::SpiritBox, "(S)pirit Box", Color::Rgb(215, 95, 0))
     ];
 
     let mut row_one_vec = Vec::new();
@@ -207,12 +207,14 @@ fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>, state: &Selec
                     MarkState::Negative => "[-] "
                 };
                 let label = format!{"{}{}", s, evidence_info.1};
-                let color = if state.possible(evidence_info.0) {
-                    evidence_info.2
+                let is_possible = evidence_info.0.possible(possible_ghosts);
+                let style = if is_possible {
+                    Style::default().fg(evidence_info.2).bold()
                 } else {
-                    Color::Gray
+                    Style::default().fg(Color::Gray).crossed_out().slow_blink()
                 };
-                this_row_vec.push(Cell::from(label).style(Style::default().fg(color).bold()));
+                
+                this_row_vec.push(Cell::from(label).style(style));
             } else if i == 7 {
                 this_row_vec.push(Cell::from("(R)eset"));
             } else if i == 8 {
