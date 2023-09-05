@@ -2,7 +2,7 @@ pub mod evidence;
 pub mod ghosts; 
 pub mod state;
 
-use std::{io, fs, collections::HashMap, time::{SystemTime, Duration}, ops::Sub};
+use std::{io, fs, collections::HashMap, time::{SystemTime, Duration}};
 use evidence::Evidence;
 use ghosts::Ghost;
 use ratatui::{
@@ -208,11 +208,15 @@ fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>, state: &Selec
                 };
                 let label = format!{"{} {}", s, evidence_info.1};
                 let is_possible = evidence_info.0.possible(possible_ghosts);
-                let style = if is_possible {
+                let mut style = if is_possible {
                     Style::default().fg(evidence_info.2).bold()
                 } else {
-                    Style::default().fg(Color::Gray).crossed_out()
+                    Style::default().fg(Color::Gray).bg(Color::DarkGray)
                 };
+
+                if possible_ghosts.is_empty() {
+                    style = style.slow_blink().bg(Color::Reset);
+                }
                 
                 this_row_vec.push(Cell::from(label).style(style));
             } else if i == 7 {
