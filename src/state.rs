@@ -55,21 +55,23 @@ impl SelectionState {
         self.evidences[evidence as usize] == MarkState::Positive
     }
 
-    fn selection_limit(self: &Self) -> usize {
+    fn mimic_possible(self: &Self) -> bool {
         // this exists for mimic handling logic
         // mimic wlil never show DOTS, writing, or EMF5
         if self.marked(Evidence::DOTS) == MarkState::Positive 
             || self.marked(Evidence::Writing) == MarkState::Positive
             || self.marked(Evidence::EMF) == MarkState::Positive {
-                return self.difficulty as usize;
+                return false;
             }
-        self.difficulty as usize + 1
+        true
     }
 
     pub fn toggle(self: &mut Self, evidence: Evidence) {
         match self.evidences[evidence as usize] {
             MarkState::Neutral => {
-                if self.selected_count() < self.selection_limit() {
+                if self.mimic_possible() && evidence == Evidence::GhostOrbs {
+                    self.evidences[evidence as usize] = MarkState::Positive;
+                } else if self.selected_count() < self.difficulty as usize {
                     self.evidences[evidence as usize] = MarkState::Positive;
                 } else {
                     self.evidences[evidence as usize] = MarkState::Negative;
