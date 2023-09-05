@@ -55,4 +55,17 @@ impl Evidence {
             _ => "?"
         }
     }
+
+    pub fn symbol(self: &Self) -> &str {
+        match self {
+            Evidence::EMF => "EMF",
+            Evidence::DOTS => "DTS",
+            Evidence::Ultraviolet => "UV",
+            Evidence::Freezing => "FZ",
+            Evidence::GhostOrbs => "ORB",
+            Evidence::Writing => "WR",
+            Evidence::SpiritBox => "BOX",
+            _ => "?"
+        }
+    }
 }
