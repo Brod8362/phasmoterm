@@ -151,7 +151,11 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>,
 
     //make sure our selected list state is within the range of possible ghosts
     let selected_index = list_state.selected().unwrap_or_default();
-    list_state.select(Some(usize::clamp(selected_index, 0, possible_ghosts.len()-1)));
+    if possible_ghosts.is_empty() {
+        list_state.select(None);
+    } else {
+        list_state.select(Some(usize::clamp(selected_index, 0, possible_ghosts.len()-1)));
+    }
 
     //render evidences
 
@@ -188,16 +192,16 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>,
         .highlight_style(Style::default().bold())
         .highlight_symbol("> ");
 
-    let paragraph_text = if possible_ghosts.is_empty() {
-        String::from("No possible ghosts given current restrictions")
+    let paragraph = if possible_ghosts.is_empty() {
+        Paragraph::new("No possible ghosts given current restrictions".red().bold())
     } else {
         match list_state.selected() {
-            Some(i) => String::from(possible_ghosts[i].description.clone()),
-            _ => String::from("No ghost selected")
+            Some(i) => Paragraph::new(possible_ghosts[i].description.clone()),
+            _ => Paragraph::new("No ghost selected")
         }
     };
 
-    let ghost_evidence_box = Paragraph::new(paragraph_text)
+    let ghost_evidence_box = paragraph
         .block(Block::default()
         .title("Ghost Information")
         .borders(Borders::ALL))

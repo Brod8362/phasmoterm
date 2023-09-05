@@ -1,3 +1,4 @@
+use ratatui::widgets::Paragraph;
 use serde::Deserialize;
 
 use crate::evidence::Evidence;
@@ -20,5 +21,9 @@ pub struct Ghost {
 impl Ghost {
     pub fn has_evidence(self: &Self, evidence: Evidence) -> bool {
         self.evidence.contains(&evidence)
+    }
+
+    pub fn render_information(self: &Self) -> Paragraph {
+        Paragraph::new(self.description.clone())
     }
 }
