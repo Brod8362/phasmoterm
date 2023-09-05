@@ -1,3 +1,7 @@
+pub mod evidence;
+pub mod ghosts; 
+pub mod state;
+
 use std::{io::{self, Stdout}, thread, time::Duration};
 use ratatui::{
     backend::CrosstermBackend,
