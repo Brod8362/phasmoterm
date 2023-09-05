@@ -2,7 +2,7 @@ pub mod evidence;
 pub mod ghosts; 
 pub mod state;
 
-use std::{io::{self}, thread, time::Duration};
+use std::io;
 use evidence::Evidence;
 use ratatui::{
     backend::CrosstermBackend,
@@ -14,7 +14,7 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use state::SelectionState;
+use state::{SelectionState, MarkState};
 
 fn main() -> Result<(), io::Error> {
     // setup terminal
@@ -138,19 +138,21 @@ fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>, state: &Selec
             let i = row*3 + col;
             if i <= 6 {
                 let evidence_info = &data[i];
-                let mut label = String::new();
-                if state.marked(evidence_info.0) {
-                    label.push_str("[x] ");
+                let s = match state.marked(evidence_info.0) {
+                    MarkState::Positive => "[x] ",
+                    MarkState::Neutral => "[ ] ",
+                    MarkState::Negative => "[-] "
+                };
+                let label = format!{"{}{}", s, evidence_info.1};
+                let color = if state.possible(evidence_info.0) {
+                    evidence_info.2
                 } else {
-                    label.push_str("[ ] ")
-                }
-                label.push_str(evidence_info.1);
-    
-                this_row_vec.push(Cell::from(label).style(Style::default().fg(evidence_info.2).bold()));
+                    Color::Gray
+                };
+                this_row_vec.push(Cell::from(label).style(Style::default().fg(color).bold()));
             } else if i == 7 {
                 this_row_vec.push(Cell::from(""));
             } else if i == 8 {
-                
                 this_row_vec.push(Cell::from(format!("Ev(i)dences: {}", state.current_difficulty())));
             }
             

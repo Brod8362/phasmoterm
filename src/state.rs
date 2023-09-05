@@ -1,54 +1,72 @@
 use crate::evidence::Evidence;
+
+#[derive(Copy, Clone, PartialEq)]
+pub enum MarkState {
+    Neutral,
+    Positive,
+    Negative
+}
+
 pub struct SelectionState {
-    evidences: u32,
+    evidences: [MarkState; 7],
     difficulty: u32
 }
 
 impl SelectionState {
     pub fn new() -> SelectionState {
+        let states = [
+            MarkState::Neutral,
+            MarkState::Neutral,
+            MarkState::Neutral,
+            MarkState::Neutral,
+            MarkState::Neutral,
+            MarkState::Neutral,
+            MarkState::Neutral,
+        ];
         Self {
-            evidences: 0,
+            evidences: states,
             difficulty: 3
         }
     }
 
     pub fn reset(self: &mut Self) {
-        self.evidences = 0;
+        self.evidences[Evidence::EMF as usize] = MarkState::Neutral;
+        self.evidences[Evidence::DOTS as usize] = MarkState::Neutral;
+        self.evidences[Evidence::Ultraviolet as usize] = MarkState::Neutral;
+        self.evidences[Evidence::Freezing as usize] = MarkState::Neutral;
+        self.evidences[Evidence::GhostOrbs as usize] = MarkState::Neutral;
+        self.evidences[Evidence::Writing as usize] = MarkState::Neutral;
+        self.evidences[Evidence::SpiritBox as usize] = MarkState::Neutral;
     }
 
-    pub fn selected_count(self: &Self) -> u32 {
-        let mut count = 0;
-        let mut register = self.evidences;
-        while register > 0 {
-            if register & 1 == 1 {
-                count+=1;
-            }
-            register = register >> 1;
-        }
-        count
+    pub fn selected_count(self: &Self) -> usize {
+        self.evidences.into_iter().filter(|k| k == &MarkState::Positive).count()
     }
 
-    pub fn mark(self: &mut Self, evidence: Evidence) {
-        //TODO add ghost orbs logic here
-        if self.selected_count() >= self.difficulty {
-            return;
-        }
-        self.evidences |= evidence as u32;
+    pub fn marked(self: &Self, evidence: Evidence) -> MarkState {
+        self.evidences[evidence as usize]
     }
 
-    pub fn unmark(self: &mut Self, evidence: Evidence) {
-        self.evidences &= !(evidence as u32);
-    }
-
-    pub fn marked(self: &Self, evidence: Evidence) -> bool {
-        (self.evidences & (evidence as u32)) != 0
+    pub fn possible(self: &Self, evidence: Evidence) -> bool {
+        //TODO
+        self.evidences[evidence as usize] == MarkState::Positive
     }
 
     pub fn toggle(self: &mut Self, evidence: Evidence) {
-        if self.marked(evidence) {
-            self.unmark(evidence);
-        } else  {
-            self.mark(evidence);
+        match self.evidences[evidence as usize] {
+            MarkState::Neutral => {
+                if self.selected_count() < self.difficulty as usize {
+                    self.evidences[evidence as usize] = MarkState::Positive;
+                } else {
+                    self.evidences[evidence as usize] = MarkState::Negative;
+                }
+            },
+            MarkState::Positive => {
+                self.evidences[evidence as usize] = MarkState::Negative;
+            },
+            MarkState::Negative => {
+                self.evidences[evidence as usize] = MarkState::Neutral;
+            }
         }
     }
 

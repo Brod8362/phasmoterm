@@ -1,12 +1,12 @@
 
-#[repr(u32)]
-#[derive(Copy, Clone)]
+#[repr(usize)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum Evidence {
-    EMF = 1,
-    DOTS = 2,
-    Ultraviolet = 4,
-    Freezing = 8,
-    GhostOrbs = 16,
-    Writing = 32,
-    SpiritBox = 64
+    EMF = 0,
+    DOTS = 1,
+    Ultraviolet = 2,
+    Freezing = 3,
+    GhostOrbs = 4,
+    Writing = 5,
+    SpiritBox = 6
 }
