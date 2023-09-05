@@ -134,12 +134,13 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>)
         ].as_ref())
         .split(main_layout[2]);
     
-    let ghost_names_elems = [ListItem::new("Spirit"), ListItem::new("The Mimic"), ListItem::new("Hantu")];
+    let ghost_names_elems: Vec<ListItem> = ghosts.iter().map(|k| ListItem::new(k.name.clone())).collect();
     let ghost_names_list = List::new(ghost_names_elems)
         .block(Block::default().title("Ghosts").borders(Borders::ALL))
         .highlight_style(Style::default().bold())
         .highlight_symbol("> ");
-    let ghost_evidence_box = Paragraph::new("blah blah placeholder text")
+
+    let ghost_evidence_box = Paragraph::new(ghosts[0].description.clone())
         .block(Block::default().title("Ghost Information").borders(Borders::ALL));
     f.render_widget(ghost_names_list, ghost_layout[0]);
     f.render_widget(ghost_evidence_box, ghost_layout[1]);
