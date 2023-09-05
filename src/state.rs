@@ -118,10 +118,12 @@ impl SelectionState {
     }
 
     pub fn tick_smudge(self: &mut Self) {
-        self.smudge_timer -= 1;
+        if self.smudge_timer > 0 {
+            self.smudge_timer-=1;
+        }
     }
     
-    pub fn smudge_remaining(self: &mut Self) -> u32 {
+    pub fn smudge_remaining(self: &Self) -> u32 {
         self.smudge_timer
     }
 }

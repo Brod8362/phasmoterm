@@ -15,9 +15,8 @@ use crossterm::{
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
-use serde::{de::IntoDeserializer, Deserializer, Deserialize};
+use serde::Deserialize;
 use state::{SelectionState, MarkState};
-use toml::{value::Array, Value};
 
 #[derive(Deserialize)]
 struct GhostDocument {
@@ -68,6 +67,8 @@ fn main() -> Result<(), io::Error> {
             ui(f, &state, &ghosts);
         })?;
 
+        state.tick_smudge();
+
         if let Event::Key(key) = event::read()? {
             match key.code {
                 KeyCode::Char('q') => break,
@@ -79,6 +80,7 @@ fn main() -> Result<(), io::Error> {
                 KeyCode::Char('w') => state.toggle(Evidence::Writing),
                 KeyCode::Char('s') => state.toggle(Evidence::SpiritBox),
                 KeyCode::Char('i') => state.next_difficulty(),
+                KeyCode::Char('t') => state.start_smudge(),
                 _ => {}
             }
         }
@@ -116,11 +118,13 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>)
 
     // smudge timer
 
+    let smudge_remaining = state.smudge_remaining();
+
     let smudge_timer = Gauge::default()
         .block(Block::default().title("Incense (T)imer").borders(Borders::ALL))
         .gauge_style(Style::default().fg(Color::White))
-        .label("5")
-        .percent(40);
+        .label(format!("{}s", smudge_remaining))
+        .percent(f64::round(smudge_remaining as f64/180.0*100.0) as u16);
 
     f.render_widget(smudge_timer, main_layout[1]);
 
@@ -136,7 +140,10 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>)
 
     let possible_ghosts = state.possible_ghosts(ghosts);
     
-    let ghost_names_elems: Vec<ListItem> = possible_ghosts.iter().map(|k| ListItem::new(k.name.clone())).collect();
+    let ghost_names_elems: Vec<ListItem> = possible_ghosts.iter()
+        .map(|k| ListItem::new(k.name.clone()))
+        .collect();
+    
     let ghost_names_list = List::new(ghost_names_elems)
         .block(Block::default().title("Ghosts").borders(Borders::ALL))
         .highlight_style(Style::default().bold())
