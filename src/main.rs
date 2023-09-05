@@ -145,7 +145,7 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>)
         .collect();
     
     let ghost_names_list = List::new(ghost_names_elems)
-        .block(Block::default().title("Ghosts").borders(Borders::ALL))
+        .block(Block::default().title(format!("Ghosts ({})", possible_ghosts.len())).borders(Borders::ALL))
         .highlight_style(Style::default().bold())
         .highlight_symbol("> ");
 
