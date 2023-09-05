@@ -13,7 +13,7 @@ pub struct Ghost {
     pub min_hunt_sanity: f32,
     #[serde(default)]
     pub max_hunt_sanity: f32,
-    pub evidence: [Evidence; 3],
+    pub evidence: Vec<Evidence>,
     pub description: String
 }
 

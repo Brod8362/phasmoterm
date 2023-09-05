@@ -234,7 +234,7 @@ Guaranteed UV on nightmare/insanity
 name = "The Mimic"
 speed = 1.7
 hunt_sanity = 50
-evidence = ["SpiritBox", "Ultraviolet", "Freezing"]
+evidence = ["SpiritBox", "Ultraviolet", "Freezing", "GhostOrbs"]
 description = """
 Always shows ghost orbs, even though it does not count as an evidence
 Copies behavior of other ghosts
