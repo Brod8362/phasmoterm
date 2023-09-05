@@ -54,10 +54,21 @@ impl Ghost {
         } else {
             Line::from(vec!["Hunt Sanity: ".bold(), Span::from(format!("{}%", self.min_hunt_sanity))])
         };
+
+        let mut evidence_line: Vec<Span> = Vec::new();
+        evidence_line.push("Evidence: ".bold());
+        for e in &self.evidence {
+            let mut string = String::from(e.name());
+            string.push(' ');
+            let span = Span::from(string).bold().fg(e.color());
+            evidence_line.push(span);
+        }
+
         let mut lines = vec![
             Line::from(vec!["Name: ".bold(), Span::from(self.name.clone())]),
             speed_line,
             hunt_line,
+            Line::from(evidence_line)
         ];
         
         let mut desc: Vec<Line> = self.description.split('\n').map(|l| Line::from(l)).collect();

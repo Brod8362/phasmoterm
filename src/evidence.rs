@@ -1,3 +1,4 @@
+use ratatui::style::Color;
 use serde::Deserialize;
 
 use crate::ghosts::Ghost;
@@ -27,5 +28,31 @@ pub const ALL: [Evidence; 7] = [
 impl Evidence {
     pub fn possible(self: &Self, possible_ghosts: &Vec<&Ghost>) -> bool {
         possible_ghosts.iter().find(|g| g.has_evidence(self.clone())).is_some()
+    }
+
+    pub fn color(self: &Self) -> Color {
+        match self {
+            Evidence::EMF => Color::Red,
+            Evidence::DOTS => Color::Green,
+            Evidence::Ultraviolet => Color::Magenta,
+            Evidence::Freezing => Color::LightCyan,
+            Evidence::GhostOrbs => Color::Yellow,
+            Evidence::Writing => Color::Blue,
+            Evidence::SpiritBox => Color::Rgb(215, 95, 0),
+            _ => Color::White
+        }
+    }
+
+    pub fn name(self: &Self) -> &str {
+        match self {
+            Evidence::EMF => "EMF 5",
+            Evidence::DOTS => "DOTS Projector",
+            Evidence::Ultraviolet => "Ultraviolet",
+            Evidence::Freezing => "Freezing Temperatures",
+            Evidence::GhostOrbs => "Ghost Orbs",
+            Evidence::Writing => "Ghost Writing",
+            Evidence::SpiritBox => "Spirit Box",
+            _ => "?"
+        }
     }
 }

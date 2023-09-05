@@ -214,13 +214,13 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>,
 fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>, state: &SelectionState, possible_ghosts: &Vec<&Ghost>) {
     // 3x3 grid even though we only use 7 of the slots
     let data = vec![
-        (Evidence::EMF, "(E)MF 5", Color::Red),
-        (Evidence::DOTS, "(D).O.T.S", Color::Green),
-        (Evidence::Ultraviolet, "(U)V", Color::Magenta),
-        (Evidence::Freezing, "(F)reezing", Color::LightCyan),
-        (Evidence::GhostOrbs, "(G)host Orbs", Color::Yellow),
-        (Evidence::Writing, "(W)riting", Color::Blue),
-        (Evidence::SpiritBox, "(S)pirit Box", Color::Rgb(215, 95, 0))
+        (Evidence::EMF, "(E)MF 5"),
+        (Evidence::DOTS, "(D).O.T.S"),
+        (Evidence::Ultraviolet, "(U)V"),
+        (Evidence::Freezing, "(F)reezing"),
+        (Evidence::GhostOrbs, "(G)host Orbs"),
+        (Evidence::Writing, "(W)riting"),
+        (Evidence::SpiritBox, "(S)pirit Box")
     ];
 
     let mut row_one_vec = Vec::new();
@@ -245,7 +245,7 @@ fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>, state: &Selec
                 let label = format!{"{} {}", s, evidence_info.1};
                 let is_possible = evidence_info.0.possible(possible_ghosts);
                 let mut style = if is_possible {
-                    Style::default().fg(evidence_info.2).bold()
+                    Style::default().fg(evidence_info.0.color()).bold()
                 } else {
                     Style::default().fg(Color::Gray).bg(Color::DarkGray)
                 };
