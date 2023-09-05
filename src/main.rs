@@ -2,17 +2,19 @@ pub mod evidence;
 pub mod ghosts; 
 pub mod state;
 
-use std::{io::{self, Stdout}, thread, time::Duration};
+use std::{io::{self}, thread, time::Duration};
+use evidence::Evidence;
 use ratatui::{
     backend::CrosstermBackend,
     widgets::{Block, Borders, ListItem, List, Paragraph, Gauge, Table, Cell, Row},
     Terminal, prelude::{Direction, Layout, Backend, Constraint, Rect}, Frame, style::{Style, Color, Stylize}
 };
 use crossterm::{
-    event::{self, DisableMouseCapture, EnableMouseCapture},
+    event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode},
     execute,
     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
 };
+use state::SelectionState;
 
 fn main() -> Result<(), io::Error> {
     // setup terminal
@@ -28,13 +30,32 @@ fn main() -> Result<(), io::Error> {
         ui(f);
     })?;
 
+    let mut state = SelectionState::new();
+
     // Start a thread to discard any input events. Without handling events, the
     // stdin buffer will fill up, and be read into the shell when the program exits.
-    thread::spawn(|| loop {
-        event::read();
-    });
+    loop {
+        terminal.draw(|f| {
+            ui(f);
+        })?;
 
-    thread::sleep(Duration::from_millis(5000));
+        if let Event::Key(key) = event::read()? {
+            match key.code {
+                KeyCode::Char('q') => break,
+                KeyCode::Char('e') => state.toggle(Evidence::EMF),
+                KeyCode::Char('d') => state.toggle(Evidence::DOTS),
+                KeyCode::Char('u') => state.toggle(Evidence::Ultraviolet),
+                KeyCode::Char('f') => state.toggle(Evidence::Freezing),
+                KeyCode::Char('g') => state.toggle(Evidence::GhostOrbs),
+                KeyCode::Char('w') => state.toggle(Evidence::Writing),
+                KeyCode::Char('s') => state.toggle(Evidence::SpiritBox),
+                _ => {}
+            }
+        }
+
+        state.toggle(Evidence::EMF);
+    }
+
 
     // restore terminal
     disable_raw_mode()?;

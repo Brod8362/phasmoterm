@@ -5,22 +5,30 @@ pub struct SelectionState {
 }
 
 impl SelectionState {
-    fn new() -> SelectionState {
+    pub fn new() -> SelectionState {
         Self {
             evidences: 0,
             difficulty: 0
         }
     }
 
-    fn reset(self: &mut Self) {
+    pub fn reset(self: &mut Self) {
         self.evidences = 0;
     }
 
-    fn mark(self: &mut Self, evidence: Evidence) {
-        self.evidences = self.evidences | (evidence as i32);
+    pub fn mark(self: &mut Self, evidence: Evidence) {
+        self.evidences |= (evidence as i32);
     }
 
-    fn unmark(self: &mut Self, evidence: Evidence) {
-        self.evidences = self.evidences & !(evidence as i32);
+    pub fn unmark(self: &mut Self, evidence: Evidence) {
+        self.evidences &= !(evidence as i32);
+    }
+
+    pub fn marked(self: &Self, evidence: Evidence) -> bool {
+        (self.evidences & (evidence as i32)) != 0
+    }
+
+    pub fn toggle(self: &mut Self, evidence: Evidence) {
+        self.evidences ^= evidence as i32;
     }
 }

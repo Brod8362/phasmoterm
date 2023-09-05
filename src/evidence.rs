@@ -4,7 +4,7 @@ pub enum Evidence {
     DOTS = 2,
     Ultraviolet = 4,
     Freezing = 8,
-    Orbs = 16,
+    GhostOrbs = 16,
     Writing = 32,
     SpiritBox = 64
 }
