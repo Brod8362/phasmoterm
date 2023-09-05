@@ -1,4 +1,4 @@
-use ratatui::widgets::Paragraph;
+use ratatui::{widgets::Paragraph, text::{Line, Span}, style::Stylize};
 use serde::Deserialize;
 
 use crate::evidence::Evidence;
@@ -24,6 +24,45 @@ impl Ghost {
     }
 
     pub fn render_information(self: &Self) -> Paragraph {
-        Paragraph::new(self.description.clone())
+        let speed_line = if self.max_speed != 0.0f32 {
+            Line::from(
+                vec![
+                    "Speed: ".bold(), 
+                    Span::from(format!("{}m/s", self.min_speed)),
+                    Span::from(" - "),
+                    Span::from(format!("{}m/s", self.max_speed))
+                ]
+            )
+        } else {
+            Line::from(
+                vec![
+                    "Speed: ".bold(), 
+                    Span::from(format!("{}m/s", self.min_speed))
+                ]
+            )
+        };
+
+        let hunt_line = if self.max_hunt_sanity != 0.0f32 {
+            Line::from(
+                vec![
+                    "Hunt Sanity: ".bold(), 
+                    Span::from(format!("{}%", self.min_hunt_sanity)),
+                    Span::from(" - "),
+                    Span::from(format!("{}%", self.max_hunt_sanity))
+                ]
+            )
+        } else {
+            Line::from(vec!["Hunt Sanity: ".bold(), Span::from(format!("{}%", self.min_hunt_sanity))])
+        };
+        let mut lines = vec![
+            Line::from(vec!["Name: ".bold(), Span::from(self.name.clone())]),
+            speed_line,
+            hunt_line,
+        ];
+        
+        let mut desc: Vec<Line> = self.description.split('\n').map(|l| Line::from(l)).collect();
+        lines.append(&mut desc);
+        //split description into multiple line objects
+        Paragraph::new(lines)
     }
 }

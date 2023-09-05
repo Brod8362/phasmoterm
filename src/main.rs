@@ -196,7 +196,7 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>,
         Paragraph::new("No possible ghosts given current restrictions".red().bold())
     } else {
         match list_state.selected() {
-            Some(i) => Paragraph::new(possible_ghosts[i].description.clone()),
+            Some(i) => possible_ghosts[i].render_information(),
             _ => Paragraph::new("No ghost selected")
         }
     };
