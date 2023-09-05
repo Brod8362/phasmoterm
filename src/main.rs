@@ -178,15 +178,17 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>,
     let ghost_layout = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([
-            Constraint::Percentage(40),
-            Constraint::Percentage(60)
+            Constraint::Percentage(50),
+            Constraint::Percentage(50)
         ].as_ref())
         .split(main_layout[2]);
     
     let ghost_names_elems: Vec<ListItem> = possible_ghosts.iter()
         .map(|g| {
             let mut spans = Vec::new();
+            //push name
             spans.push(Span::from(format!("{} ( ",g.name.clone())));
+            //evidence
             for e in &g.evidence {
                 let mut s = Span::from(format!("{} ",e.symbol())).fg(e.color());
                 if state.marked(*e) == MarkState::Positive {
@@ -197,6 +199,19 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>,
                 );
             }
             spans.push(Span::from(")"));
+            //speed
+            if g.max_speed == 0f32 {
+                spans.push(Span::from(format!(" {}m/s,", g.min_speed)));
+            } else {
+                spans.push(Span::from(format!(" {}m/s - {}m/s,", g.min_speed, g.max_speed)));
+            }
+
+            //hunt sanity
+            if g.max_hunt_sanity == 0 {
+                spans.push(Span::from(format!(" {}%", g.min_hunt_sanity)));
+            } else {
+                spans.push(Span::from(format!(" {}% - {}%", g.min_hunt_sanity, g.max_hunt_sanity)));
+            }
             ListItem::new(Line::from(spans))
         })
         .collect();

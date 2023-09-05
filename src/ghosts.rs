@@ -11,9 +11,9 @@ pub struct Ghost {
     #[serde(default)]
     pub max_speed: f32,
     #[serde(alias = "hunt_sanity")]
-    pub min_hunt_sanity: f32,
+    pub min_hunt_sanity: u32,
     #[serde(default)]
-    pub max_hunt_sanity: f32,
+    pub max_hunt_sanity: u32,
     pub evidence: Vec<Evidence>,
     pub description: String
 }
@@ -42,7 +42,7 @@ impl Ghost {
             )
         };
 
-        let hunt_line = if self.max_hunt_sanity != 0.0f32 {
+        let hunt_line = if self.max_hunt_sanity != 0 {
             Line::from(
                 vec![
                     "Hunt Sanity: ".bold(), 
