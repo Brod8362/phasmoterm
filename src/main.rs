@@ -2,7 +2,7 @@ pub mod evidence;
 pub mod ghosts; 
 pub mod state;
 
-use std::{io, fs, collections::HashMap};
+use std::{io, fs, collections::HashMap, time::{SystemTime, Duration}, ops::Sub};
 use evidence::Evidence;
 use ghosts::Ghost;
 use ratatui::{
@@ -62,26 +62,34 @@ fn main() -> Result<(), io::Error> {
 
     let mut state = SelectionState::new();
 
+    let mut time = SystemTime::now();
     loop {
         terminal.draw(|f| {
             ui(f, &state, &ghosts);
         })?;
 
-        state.tick_smudge();
+        let now = SystemTime::now();
+        let delta = now
+            .duration_since(time)
+            .unwrap();
+        state.tick_smudge(delta.as_secs_f32());
+        time = now;
 
-        if let Event::Key(key) = event::read()? {
-            match key.code {
-                KeyCode::Char('q') => break,
-                KeyCode::Char('e') => state.toggle(Evidence::EMF),
-                KeyCode::Char('d') => state.toggle(Evidence::DOTS),
-                KeyCode::Char('u') => state.toggle(Evidence::Ultraviolet),
-                KeyCode::Char('f') => state.toggle(Evidence::Freezing),
-                KeyCode::Char('g') => state.toggle(Evidence::GhostOrbs),
-                KeyCode::Char('w') => state.toggle(Evidence::Writing),
-                KeyCode::Char('s') => state.toggle(Evidence::SpiritBox),
-                KeyCode::Char('i') => state.next_difficulty(),
-                KeyCode::Char('t') => state.start_smudge(),
-                _ => {}
+        if let Ok(true) = event::poll(Duration::from_secs_f32(0.5)) {
+            if let Event::Key(key) = event::read()? {
+                match key.code {
+                    KeyCode::Char('q') => break,
+                    KeyCode::Char('e') => state.toggle(Evidence::EMF),
+                    KeyCode::Char('d') => state.toggle(Evidence::DOTS),
+                    KeyCode::Char('u') => state.toggle(Evidence::Ultraviolet),
+                    KeyCode::Char('f') => state.toggle(Evidence::Freezing),
+                    KeyCode::Char('g') => state.toggle(Evidence::GhostOrbs),
+                    KeyCode::Char('w') => state.toggle(Evidence::Writing),
+                    KeyCode::Char('s') => state.toggle(Evidence::SpiritBox),
+                    KeyCode::Char('i') => state.next_difficulty(),
+                    KeyCode::Char('t') => state.start_smudge(),
+                    _ => {}
+                }
             }
         }
     }

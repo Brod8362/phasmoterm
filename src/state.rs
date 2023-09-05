@@ -10,7 +10,7 @@ pub enum MarkState {
 pub struct SelectionState {
     evidences: [MarkState; 7],
     difficulty: u32,
-    smudge_timer: u32
+    smudge_timer: f32
 }
 
 impl SelectionState {
@@ -27,7 +27,7 @@ impl SelectionState {
         Self {
             evidences: states,
             difficulty: 3,
-            smudge_timer: 0
+            smudge_timer: 0f32
         }
     }
 
@@ -127,16 +127,14 @@ impl SelectionState {
     //Smudge timer
 
     pub fn start_smudge(self: &mut Self) {
-        self.smudge_timer = 180;
+        self.smudge_timer = 180f32;
     }
 
-    pub fn tick_smudge(self: &mut Self) {
-        if self.smudge_timer > 0 {
-            self.smudge_timer-=1;
-        }
+    pub fn tick_smudge(self: &mut Self, delta: f32) {
+        self.smudge_timer = f32::max(0f32, self.smudge_timer - delta);
     }
     
     pub fn smudge_remaining(self: &Self) -> u32 {
-        self.smudge_timer
+        f32::round(self.smudge_timer) as u32
     }
 }
