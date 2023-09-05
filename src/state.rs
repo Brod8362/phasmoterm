@@ -39,6 +39,7 @@ impl SelectionState {
         self.evidences[Evidence::GhostOrbs as usize] = MarkState::Neutral;
         self.evidences[Evidence::Writing as usize] = MarkState::Neutral;
         self.evidences[Evidence::SpiritBox as usize] = MarkState::Neutral;
+        self.smudge_timer = 0.0f32;
     }
 
     pub fn selected_count(self: &Self) -> usize {

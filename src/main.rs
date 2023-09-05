@@ -88,6 +88,7 @@ fn main() -> Result<(), io::Error> {
                     KeyCode::Char('s') => state.toggle(Evidence::SpiritBox),
                     KeyCode::Char('i') => state.next_difficulty(),
                     KeyCode::Char('t') => state.start_smudge(),
+                    KeyCode::Char('r') => state.reset(),
                     _ => {}
                 }
             }
@@ -213,7 +214,7 @@ fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>, state: &Selec
                 };
                 this_row_vec.push(Cell::from(label).style(Style::default().fg(color).bold()));
             } else if i == 7 {
-                this_row_vec.push(Cell::from(""));
+                this_row_vec.push(Cell::from("(R)eset"));
             } else if i == 8 {
                 this_row_vec.push(Cell::from(format!("Ev(i)dences: {}", state.current_difficulty())));
             }
@@ -225,7 +226,7 @@ fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>, state: &Selec
         Row::new(row_two_vec),
         Row::new(row_three_vec)
     ])
-    .block(Block::default().title("Ev(i)dence").borders(Borders::ALL))
+    .block(Block::default().title("Evidence").borders(Borders::ALL))
     .widths(&[Constraint::Percentage(33), Constraint::Percentage(33), Constraint::Percentage(33)]);
 
     f.render_widget(table, area);
