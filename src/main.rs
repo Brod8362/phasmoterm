@@ -187,16 +187,21 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>,
         .map(|g| {
             let mut spans = Vec::new();
             //push name
-            spans.push(Span::from(format!("{} ( ",g.name.clone())));
+            spans.push(Span::from(format!("{} (",g.name.clone())));
             //evidence
-            for e in &g.evidence {
-                let mut s = Span::from(format!("{} ",e.symbol())).fg(e.color());
-                if state.marked(*e) == MarkState::Positive {
+
+            for i in 0..g.evidence.len() {
+                let e = g.evidence[i];
+                let mut s = Span::from(format!("{}",e.symbol())).fg(e.color());
+                if state.marked(e) == MarkState::Positive {
                     s = s.bold();
-                };
+                };                
                 spans.push(
                    s
                 );
+                if i != g.evidence.len()-1 {
+                   spans.push(Span::from("/"));
+                }
             }
             spans.push(Span::from(")"));
             //speed
