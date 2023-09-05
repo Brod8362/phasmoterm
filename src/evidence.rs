@@ -1,4 +1,6 @@
 
+#[repr(u32)]
+#[derive(Copy, Clone)]
 pub enum Evidence {
     EMF = 1,
     DOTS = 2,

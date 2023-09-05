@@ -24,11 +24,6 @@ fn main() -> Result<(), io::Error> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
-    
-
-    terminal.draw(|f| {
-        ui(f);
-    })?;
 
     let mut state = SelectionState::new();
 
@@ -36,7 +31,7 @@ fn main() -> Result<(), io::Error> {
     // stdin buffer will fill up, and be read into the shell when the program exits.
     loop {
         terminal.draw(|f| {
-            ui(f);
+            ui(f, &state);
         })?;
 
         if let Event::Key(key) = event::read()? {
@@ -52,8 +47,6 @@ fn main() -> Result<(), io::Error> {
                 _ => {}
             }
         }
-
-        state.toggle(Evidence::EMF);
     }
 
 
@@ -69,7 +62,7 @@ fn main() -> Result<(), io::Error> {
     Ok(())
 }
 
-fn ui<B: Backend>(f: &mut Frame<B>) {
+fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState) {
     let main_layout = Layout::default()
         .direction(Direction::Vertical)
         .margin(1)
@@ -84,7 +77,7 @@ fn ui<B: Backend>(f: &mut Frame<B>) {
 
     //render evidences
 
-    render_evidence_table(main_layout[0], f);
+    render_evidence_table(main_layout[0], f, state);
 
     // smudge timer
 
@@ -118,24 +111,53 @@ fn ui<B: Backend>(f: &mut Frame<B>) {
 
 }
 
-fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>) {
+fn render_evidence_table<B: Backend>(area: Rect, f: &mut Frame<B>, state: &SelectionState) {
     // 3x3 grid even though we only use 7 of the slots
+    let data = vec![
+        (Evidence::EMF, "(E)MF 5", Color::Red),
+        (Evidence::DOTS, "(D).O.T.S", Color::Green),
+        (Evidence::Ultraviolet, "(U)V", Color::Magenta),
+        (Evidence::Freezing, "(F)reezing", Color::LightCyan),
+        (Evidence::GhostOrbs, "(G)host Orbs", Color::Yellow),
+        (Evidence::Writing, "(W)riting", Color::Blue),
+        (Evidence::SpiritBox, "(S)pirit Box", Color::LightRed)
+    ];
+
+    let mut row_one_vec = Vec::new();
+    let mut row_two_vec = Vec::new();
+    let mut row_three_vec = Vec::new();
+    for row in 0..3 {
+        let this_row_vec = match row {
+            0 => &mut row_one_vec,
+            1 => &mut row_two_vec,
+            _ => &mut row_three_vec
+        };
+
+        for col in 0..3 {
+            let i = row*3 + col;
+            if i <= 6 {
+                let evidence_info = &data[i];
+                let mut label = String::new();
+                if state.marked(evidence_info.0) {
+                    label.push_str("[x] ");
+                } else {
+                    label.push_str("[ ] ")
+                }
+                label.push_str(evidence_info.1);
+    
+                this_row_vec.push(Cell::from(label).style(Style::default().fg(evidence_info.2).bold()));
+            } else if i == 7 {
+                this_row_vec.push(Cell::from(""));
+            } else if i == 8 {
+                this_row_vec.push(Cell::from("Ev(i)dences: TODO"));
+            }
+            
+        }
+    }
     let table = Table::new(vec![
-        Row::new(vec![
-            Cell::from("[ ] (E)MF 5").style(Style::default().fg(Color::Red).bold()),
-            Cell::from("[ ] (D).O.T.S").style(Style::default().fg(Color::Green).bold()),
-            Cell::from("[ ] (U)V").style(Style::default().fg(Color::Magenta).bold())
-        ]),
-        Row::new(vec![
-            Cell::from("[ ] (F)reezing").style(Style::default().fg(Color::LightCyan).bold()),
-            Cell::from("[ ] (G)host Orbs").style(Style::default().fg(Color::Yellow).bold()),
-            Cell::from("[ ] (W)riting").style(Style::default().fg(Color::Blue)).bold(),
-        ]),
-        Row::new(vec![
-            Cell::from("[ ] (S)pirit Box").style(Style::default().fg(Color::LightRed)).bold(),
-            Cell::from(""), //blank spacer cell
-            Cell::from("3 Evidences").style(Style::default().fg(Color::White)),
-        ])
+        Row::new(row_one_vec),
+        Row::new(row_two_vec),
+        Row::new(row_three_vec)
     ])
     .block(Block::default().title("Ev(i)dence").borders(Borders::ALL))
     .widths(&[Constraint::Percentage(33), Constraint::Percentage(33), Constraint::Percentage(33)]);

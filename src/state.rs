@@ -1,7 +1,7 @@
 use crate::evidence::Evidence;
 pub struct SelectionState {
-    evidences: i32,
-    difficulty: i32
+    evidences: u32,
+    difficulty: u32
 }
 
 impl SelectionState {
@@ -17,18 +17,18 @@ impl SelectionState {
     }
 
     pub fn mark(self: &mut Self, evidence: Evidence) {
-        self.evidences |= (evidence as i32);
+        self.evidences |= (evidence as u32);
     }
 
     pub fn unmark(self: &mut Self, evidence: Evidence) {
-        self.evidences &= !(evidence as i32);
+        self.evidences &= !(evidence as u32);
     }
 
     pub fn marked(self: &Self, evidence: Evidence) -> bool {
-        (self.evidences & (evidence as i32)) != 0
+        (self.evidences & (evidence as u32)) != 0
     }
 
     pub fn toggle(self: &mut Self, evidence: Evidence) {
-        self.evidences ^= evidence as i32;
+        self.evidences ^= evidence as u32;
     }
 }
