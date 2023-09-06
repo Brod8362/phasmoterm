@@ -3,7 +3,11 @@ name = "Spirit"
 speed = 1.7
 hunt_sanity = 50
 evidence = ["EMF","SpiritBox","Writing"]
-description = "Incense prevents hunt for 180s instead of 90"
+description = """
+- Incense prevents hunt for 180s instead of 90
+- Hunt prevention still starts if smudged during a hunt
+- No other notable behavior
+"""
 
 [ghosts.wraith]
 name = "Wraith"
@@ -11,8 +15,10 @@ speed = 1.7
 hunt_sanity = 50
 evidence = ["EMF","SpiritBox","DOTS"]
 description = """
-Will not ever step in salt.
-Can randomly teleport to player, leaving EMF 2 or 5"""
+- Will never disturb a salt pile
+- Chance to teleport within 3m of a random playe,r leaving EMF 2/5
+- No other notable behavior
+"""
 
 [ghosts.phantom]
 name = "Phantom"
@@ -20,8 +26,11 @@ speed = 1.7
 hunt_sanity = 50
 evidence = ["SpiritBox","Ultraviolet","DOTS"]
 description = """
-Will not appear in ghost photos
-Less visible during hunts
+- Will not be visible in ghost photos, and photo will not contain interference
+- Ghost will disappear if a photo is taken during an event
+- Can teleport to a randomly selected player, emitting EMF 2/5
+- Being within 10m (heartbeat playing) during a hunt or ghost event reduces sanity by 0.5%/s
+- Less visible during hunts
 """
 
 [ghosts.poltergeist]
@@ -30,9 +39,11 @@ speed = 1.7
 hunt_sanity = 50
 evidence = ["SpiritBox", "Ultraviolet", "Writing"]
 description = """
-Can throw many items at once, -2% sanity for each item
-Throws items more often during hunts
-Higher change to throw objects"""
+- More likely to throw items
+- Always throws items every 0.5s during a hunt, instead of 50% chance to do so
+- Throws items with up to 2x force
+- Ability throws multiiple items at once, decreasing sanity per item thrown
+"""
 
 [ghosts.banshee]
 name = "Banshee"
@@ -40,8 +51,16 @@ speed = 1.7
 hunt_sanity = 50
 evidence = ["Ultraviolet", "GhostOrbs", "DOTS"]
 description = """
-Unique scream through paramic (not guaranteed)
-Will only go after its target during a hunt"""
+- Unique scream through paramic (not guaranteed)
+- Will only go after its target during a hunt
+- Higher chance of singing ghost events
+- Walking near it during a ghost event drains more sanity if it was targeting you (15% instead of 10%)
+- Only moves towards target during DOTS (not nearest player)
+- 67% chance to roam to target if on the same floor
+- Hunt target only changes when player dies or disconnects
+- Only checks target's sanity, not average
+- Will not kill non-hunt targets under any conditions (even direct contact)
+"""
 
 [ghosts.jinn]
 name = "Jinn"
@@ -50,9 +69,14 @@ max_speed = 2.5
 hunt_sanity = 50
 evidence = ["EMF", "Ultraviolet", "Freezing"]
 description = """
-Ability drops nearby players' sanity by 25% with EMF 2 at the breaker
-Cannot turn off the fuse box
-Faster when fuse box is on
+- Cannot turn of fuse box directly
+- Can still trip fuse box when turning on lights
+- Will lower sanity of players near fuse box by 25% when turning it off (emits EMF 2/5)
+- Faster during hunts if:
+	- Fuse box is on
+	- Has line-of-sight with target
+	- >3m from target
+- Otherwise, base speed
 """
 
 [ghosts.mare]
@@ -62,10 +86,14 @@ min_hunt_sanity = 40
 max_hunt_sanity = 60
 evidence = ["SpiritBox", "GhostOrbs", "Writing"]
 description = """
-Can turn off a light immediately after player turns it on
-Cannot turn on lights (except TV or computer)
-More likely to turn off/break lights
-Hunts at 60% when lights off at ghost's position, 40% otherwise
+- Cannot turn lights on
+- More likely to turn lights off when interacting
+- More likely to roam to unlit rooms
+- Can turn light off immediately after it is turned on if within 4m (10s cooldown)
+- 10s cooldown resets if light is turned on/off
+- Hunts at 60% if lights in current room are off 
+- Hunts at 40% if lights are current room are on, even if fuse box is off/broken (not if the light itself is broken)
+- Equipment does not count as lighting
 """
 
 [ghosts.revenant]
@@ -75,7 +103,8 @@ max_speed = 3.0
 hunt_sanity = 50
 evidence = ["GhostOrbs", "Writing", "Freezing"]
 description = """
-Fast once the player has been sensed (equipment, voice, line of sight)
+- When a player is detected during a hunt, instantly moves at 3m/s
+- When reverting to searching mode during a hunt, speed reverts to base over ~2.7s
 """
 
 [ghosts.shade]
@@ -84,12 +113,13 @@ speed = 1.7
 hunt_sanity = 35
 evidence = ["EMF", "Writing", "Freezing"]
 description = """
-Extremely docile
-Will not do interactions that emit EMF 2/3/5 if someone is in the room (writing excluded)
-Cannot hunt if a player is in the room
-More ghost events at lower sanity
-More likely to appear as a shadow when manifesting (TODO: get % change)
-Can appear as a shadow when spawned from music box or summoning circle
+- Less likely to perform ghost events at high sanity
+- Ghost event success rate increases by 2% per 1% average sanity lost
+- 67% chance to perform 'ghost mist' event
+- 67% chance to appear as a shadow when manifesting
+- Chance to appear as a shadow when summoned via summoning circle/music box/monkey paw
+- Cannot perform interactions or hunt when player is in the same room (writing excluded)
+- Could potentially 'reach' into player's room from another room when interacting
 """
 
 [ghosts.demon]
@@ -99,10 +129,11 @@ min_hunt_sanity = 70
 max_hunt_sanity = 100
 evidence = ["Ultraviolet", "Writing", "Freezing"]
 description = """
-Incense only prevents hunts for 60s instead of 90s
-20s minimum hunt cool down instead of 25s
-Crucifix effective range increased by 50% (not displayed)
-Can hunt at any sanity, standard hunts start at 70%
+- Interaction range of 5m instead of 3m
+- Can start a hunt at any sanity for any reason
+- Minimum 20s cooldown between hunts, instead of 25s
+- Smudge only blocks hunts for 60s instead of 90s
+- Crucifix effective range is increased 50%
 """
 
 [ghosts.yurei]
@@ -111,9 +142,13 @@ speed = 1.7
 hunt_sanity = 50
 evidence = ["GhostOrbs", "Freezing", "DOTS"]
 description = """
-Can shut doors and drop nearby sanity 15% if a door is in the room
-Can close an exit door outside of a hunt or ghost event
-Incense locks it in the ghost room and blocks wandering for 60s
+- Incense forces the ghost to return to the ghost room, and traps it for 60s
+- Can still leave ghost room when doing ghost events, will return after
+- Ability causes 15% sanity drain within 7.5m
+- Ability selects an open door in the current room and closes it (produces EMF 2)
+- Cannot use ability if room has no door
+- Locker/closets do not count as doors, but tent flaps do
+- Only ghost that can shut an exit door without a hunt/event
 """
 
 [ghosts.oni]
@@ -122,10 +157,12 @@ speed = 1.7
 hunt_sanity = 50
 evidence = ["EMF", "Freezing", "DOTS"]
 description = """
-Drains 20% sanity on ghost events instead of 10%
-Will never do airball event
-More visible during hunts
-More active when multiple people are around
+- More active when people are around
+- More active in general
+- Cannot perform airball event
+- Less likely to show as a shadow during ghost events
+- Double sanity drain during ghost event (20% instead of 10%)
+- More visible during hunts
 """
 
 [ghosts.yokai]
@@ -135,9 +172,10 @@ min_hunt_sanity = 50
 max_hunt_sanity = 80
 evidence = ["SpiritBox", "GhostOrbs", "DOTS"]
 description = """
-Short hearing range during hunts (try talking and see if it comes to you during a hunt)
-More active when talked to
-Hunts at 80% when talking nearby, 50% otherwise
+- More active near speaking players
+- Must be closer to music box to start a cursed hunt
+- Hunt sanity temporarily increased when using voice chat nearby
+- Can only hear players or sense electronics in a 2.5m range during a hunt
 """
 
 [ghosts.hantu]
@@ -147,11 +185,13 @@ max_speed = 2.7
 hunt_sanity = 50
 evidence = ["Ultraviolet", "GhostOrbs", "Freezing"]
 description = """
-Ghost may have visible breath in any room during hunts with breaker off
-Cannot turn on breaker
-High chance to turn off breaker
-Faster in colder temperatures, does not speed up in line-of-sight
-Guaranteed freezing on nightmare/insanity
+- Cannot turn on the fuse box
+- 2x as likely to turn off the fuse box
+- Faster in colder temperatures (fastest in freezing)
+- Will not speed up in line of sight
+- Will emit freezing breath during hunts if the fuse box is off
+- Dead players cannot see aforementioned freezing breath
+- Guaranteed freezing temperature
 """
 
 [ghosts.goryo]
@@ -160,11 +200,11 @@ speed = 1.7
 hunt_sanity = 50
 evidence = ["EMF", "Ultraviolet", "DOTS"]
 description = """
-DOTS only visible on screen in truck
-DOTS rare when players are in the room
-Can't change ghost room
-Won't roam far
-Guaranteed DOTS on nightmare/insanity
+- Can only perform short roams
+- Cannot change favorite rooms (except using monkey paw)
+- Will only interact with DOTS if no players are in the room
+- DOTS is only visible through a camcorder
+- Guaranteed DOTS
 """
 
 [ghosts.myling]
@@ -173,8 +213,8 @@ speed = 1.7
 hunt_sanity = 50
 evidence = ["EMF", "Ultraviolet", "Writing"]
 description = """
-Footsteps/vocal range shorter during hunts
-More sounds through paramic
+- Produces paramic sounds more often
+- Footsteps/vocalizations only audible within 12m (instead of 20m)
 """
 
 [ghosts.onryo]
@@ -183,9 +223,11 @@ speed = 1.7
 hunt_sanity = 60
 evidence = ["SpiritBox", "GhostOrbs", "Freezing"]
 description = """
-Will hunt at any sanity after extinguishing 3 firelights
-Firelights act as crucifixes (4m range)
-More player dead increases chance of extinguishing flame
+- More dead players will increase rate of blowing out flames
+- "Flames" are firelights/igniters/campfires
+- Will consume a flame instead of a crucifix when trying to hunt
+- Every third flame blown out forces a hunt attempt
+	- This hunt may be delayed ~6 seconds
 """
 
 [ghosts.twins]
@@ -195,10 +237,13 @@ max_speed = 1.87
 hunt_sanity = 50
 evidence = ["EMF", "SpiritBox", "Freezing"]
 description = """
-Twins often interact one after the other ('twinteraction')
-Only one twin can emit EMF
-Twinteraction may be visible on truck graph by changing slope during rising edge
-Speed depends on which twin hunts
+- Despite the name, there is only one ghost
+- Cannot perform ghost events/hunts at the same time
+- When using abillity, performs one interaction in a short radius, and one in a much larger one 
+- All interactions have a standard chance to perform EMF 5
+- When starting a hunt, 50% chance to start at current location, and 50% to start at point of last interaction
+- Standard hunt cooldown (25s)
+- Slower when hunting from present location, faster when hunting from interaction location
 """
 
 [ghosts.raiju]
@@ -209,11 +254,13 @@ min_hunt_sanity = 50
 max_hunt_sanity = 65
 evidence = ["EMF", "GhostOrbs", "DOTS"]
 description = """
-Longer electronics flicker range while hunting
-Hunts at 65% near active player equipment
-TODO: need to check if ground items count (e.g EMF reader)
-Faster near player equipment
-EMF 5 + Ghost Orbs on nightmare confirms
+- Electronic interference range is 15m instead of 10m
+- Hunt sanity is higher when near active electonic equipment
+- Items in hand OR on the floor count
+- Moves at 2.5m/s when near electronics, depending on map size:
+	- Small map: 6m range
+	- Medium map: 8m range
+	- Large map: 10m range
 """
 
 [ghosts.obake]
@@ -222,23 +269,33 @@ speed = 1.7
 hunt_sanity = 50
 evidence = ["EMF", "Ultraviolet", "GhostOrbs"]
 description = """
-Chance for 6-finger handprints
-Chance for 2-finger light switch prints
-Flickers to a second model during hunts (guaranteed once per hunt)
-Will not always leave UV
-UV evidence can disappear sooner than two minutes
-Guaranteed UV on nightmare/insanity
+- Only 75% chance to leave UV instead of 100%
+- 1/6 chance to leave unique prints:
+	- 6-fingered handprint
+	- 2 fingerprints on light switches
+	- Five fingerprints on keyboard and prison cell doors
+- Ability reduces remaining time on existing UV prints by half
+- 1/15 chance to flicker to a different model when hunting (guaranteed once per hunt)
+- Dead players cannot see shapeshift
+- Posture change during hunt also counts (e.g standing to crawling)
+- Guaranteed Ultraviolet
 """
 
 [ghosts.mimic]
 name = "The Mimic"
 speed = 1.7
-hunt_sanity = 50
+min_hunt_sanity = 35
+max_hunt_sanity = 100
 evidence = ["SpiritBox", "Ultraviolet", "Freezing", "GhostOrbs"]
 description = """
-Always shows ghost orbs, even though it does not count as an evidence
-Copies behavior of other ghosts
-Changes copied ghost every 30s - 2min
+- Can imitate any ghost, inheriting:
+	- Interaction/event rates
+	- Hunt thresholds
+	- Hunt movement speeds
+	- Special abilities
+- Will always show Ghost Orbs, even though it isn't considered an evidence
+- Changes imitated ghost every 30s - 2min
+- Can also mimic the player or itself, in which case it has no special properties
 """
 
 [ghosts.moroi]
@@ -248,11 +305,14 @@ max_speed = 3.71
 hunt_sanity = 50
 evidence = ["SpiritBox", "Writing", "Freezing"]
 description = """
-If heard through spirit box, player is cursed
-Curse causes 2x sanity drain for the rest of the game
-Blinded 50% longer when incensed 
-Faster when average sanity is lower
-Guaranteed spirit box on nightmare/insanity
+- Curses player if heard through spirit box or paramic
+- Passive sanity drain doubles when cursed
+- Being in a lit area no longer prevents sanity drain when cursed
+- Firelights will no longer mitigate sanity loss when cursed [verification needed]
+- Being outside of investigation area still pauses sanity drain
+- Sanity medication will remove curse
+- Speed depends on average sanity when hunt begins, lower sanity = faster speed
+- Incense stuns for longer during hunts
 """
 
 
@@ -263,10 +323,12 @@ max_speed = 3.0
 hunt_sanity = 40
 evidence = ["SpiritBox", "Writing", "DOTS"]
 description = """
-Heavy breathing through spirit box if < 1m away
-Will always find you during a hunt
-Slows down considerably when close to the player
-Increased chance for DOTS/Writing
+- More likely to interact with DOTS/books
+- 33% chance for unique heavy breathing through spirit box if within 1m of ghost
+- Always knows where players are during a hunt
+- Will immediately target nearest player when hunt starts
+- Slows down considerably when close to a player
+- Remains at current speed when smudged
 """
 
 [ghosts.thaye]
@@ -277,11 +339,8 @@ min_hunt_sanity = 15
 max_hunt_sanity = 75
 evidence = ["GhostOrbs", "Writing", "DOTS"]
 description = """
-Ages when near players (once every 1-2 min)
-More active when younger
-Higher chance for DOTS/Writing
-Age determines hunt sanity (older = lower sanity)
-Age determines speed (older = slower)
-Will not speed up at line of sight
-Writing + DOTS on nightmare confirms
+- More likely to interact with DOTS/writing
+- Every 1-2 minutes, it will age (+1) if a player is nearby
+- Younger ages will be more active, older ages (10+) will be least active
+- Will not speed up on line-of-sight of player
 """
