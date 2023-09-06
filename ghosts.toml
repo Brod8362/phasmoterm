@@ -287,7 +287,7 @@ description = """
 [ghosts.mimic]
 name = "The Mimic"
 speed = 1.7
-min_hunt_sanity = 35
+min_hunt_sanity = 15
 max_hunt_sanity = 100
 evidence = ["SpiritBox", "Ultraviolet", "Freezing", "GhostOrbs"]
 guaranteed = ["GhostOrbs"]

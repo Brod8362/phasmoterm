@@ -1,6 +1,7 @@
 pub mod evidence;
 pub mod ghosts; 
 pub mod state;
+pub mod util;
 
 use std::{io, fs, collections::HashMap, time::{SystemTime, Duration}};
 use evidence::Evidence;
@@ -17,6 +18,7 @@ use crossterm::{
 };
 use serde::Deserialize;
 use state::{SelectionState, MarkState};
+use util::hunt_sanity_color;
 
 #[derive(Deserialize)]
 struct GhostDocument {
@@ -261,11 +263,15 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>,
             }
 
             //hunt sanity
+            let min_color = hunt_sanity_color(g.min_hunt_sanity);
+            let max_color = hunt_sanity_color(g.max_hunt_sanity);
             if g.max_hunt_sanity == 0 {
-                spans.push(Span::from(format!(" {}%", g.min_hunt_sanity)));
+                spans.push(Span::from(format!(" {}%", g.min_hunt_sanity)).fg(min_color));
             } else {
-                spans.push(Span::from(format!(" {}% - {}%", g.min_hunt_sanity, g.max_hunt_sanity)));
-            }
+                spans.push(Span::from(format!(" {}%", g.min_hunt_sanity)).fg(min_color));
+                spans.push(Span::from(" - "));
+                spans.push(Span::from(format!("{}%", g.max_hunt_sanity)).fg(max_color));
+            };
             ListItem::new(Line::from(spans))
         })
         .collect();
