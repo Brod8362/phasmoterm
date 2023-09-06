@@ -73,9 +73,9 @@ description = """
 - Can still trip fuse box when turning on lights
 - Will lower sanity of players near fuse box by 25% when turning it off (emits EMF 2/5)
 - Faster during hunts if:
-	- Fuse box is on
-	- Has line-of-sight with target
-	- >3m from target
+	-- Fuse box is on
+	-- Has line-of-sight with target
+	-- >3m from target
 - Otherwise, base speed
 """
 
@@ -229,7 +229,7 @@ description = """
 - "Flames" are firelights/igniters/campfires
 - Will consume a flame instead of a crucifix when trying to hunt
 - Every third flame blown out forces a hunt attempt
-	- This hunt may be delayed ~6 seconds
+	-- This hunt may be delayed ~6 seconds
 """
 
 [ghosts.twins]
@@ -260,9 +260,9 @@ description = """
 - Hunt sanity is higher when near active electonic equipment
 - Items in hand OR on the floor count
 - Moves at 2.5m/s when near electronics, depending on map size:
-	- Small map: 6m range
-	- Medium map: 8m range
-	- Large map: 10m range
+	-- Small map: 6m range
+	-- Medium map: 8m range
+	-- Large map: 10m range
 """
 
 [ghosts.obake]
@@ -274,9 +274,9 @@ guaranteed = ["Ultraviolet"]
 description = """
 - Only 75% chance to leave UV instead of 100%
 - 1/6 chance to leave unique prints:
-	- 6-fingered handprint
-	- 2 fingerprints on light switches
-	- Five fingerprints on keyboard and prison cell doors
+	-- 6-fingered handprint
+	-- 2 fingerprints on light switches
+	-- Five fingerprints on keyboard and prison cell doors
 - Ability reduces remaining time on existing UV prints by half
 - 1/15 chance to flicker to a different model when hunting (guaranteed once per hunt)
 - Dead players cannot see shapeshift
@@ -293,10 +293,10 @@ evidence = ["SpiritBox", "Ultraviolet", "Freezing", "GhostOrbs"]
 guaranteed = ["GhostOrbs"]
 description = """
 - Can imitate any ghost, inheriting:
-	- Interaction/event rates
-	- Hunt thresholds
-	- Hunt movement speeds
-	- Special abilities
+	-- Interaction/event rates
+	-- Hunt thresholds
+	-- Hunt movement speeds
+	-- Special abilities
 - Will always show Ghost Orbs, even though it isn't considered an evidence
 - Changes imitated ghost every 30s - 2min
 - Can also mimic the player or itself, in which case it has no special properties
