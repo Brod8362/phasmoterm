@@ -93,8 +93,10 @@ fn main() -> Result<(), io::Error> {
                     KeyCode::Char('t') => state.start_smudge(),
                     KeyCode::Char('r') => state.reset(),
                     KeyCode::Down => list_scroll_by(&mut list_state, 1),
+                    KeyCode::Tab => list_scroll_by(&mut list_state, 1),
                     KeyCode::PageDown => list_scroll_by(&mut list_state, 10),
                     KeyCode::Up => list_scroll_by(&mut list_state, -1),
+                    KeyCode::BackTab => list_scroll_by(&mut list_state, -1),
                     KeyCode::PageUp => list_scroll_by(&mut list_state, -10),
                     _ => {}
                 }
