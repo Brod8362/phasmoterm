@@ -184,6 +184,7 @@ min_speed = 1.44
 max_speed = 2.7
 hunt_sanity = 50
 evidence = ["Ultraviolet", "GhostOrbs", "Freezing"]
+guaranteed = ["Freezing"]
 description = """
 - Cannot turn on the fuse box
 - 2x as likely to turn off the fuse box
@@ -199,6 +200,7 @@ name = "Goryo"
 speed = 1.7
 hunt_sanity = 50
 evidence = ["EMF", "Ultraviolet", "DOTS"]
+guaranteed = ["DOTS"]
 description = """
 - Can only perform short roams
 - Cannot change favorite rooms (except using monkey paw)
@@ -268,6 +270,7 @@ name = "Obake"
 speed = 1.7
 hunt_sanity = 50
 evidence = ["EMF", "Ultraviolet", "GhostOrbs"]
+guaranteed = ["Ultraviolet"]
 description = """
 - Only 75% chance to leave UV instead of 100%
 - 1/6 chance to leave unique prints:
@@ -287,6 +290,7 @@ speed = 1.7
 min_hunt_sanity = 35
 max_hunt_sanity = 100
 evidence = ["SpiritBox", "Ultraviolet", "Freezing", "GhostOrbs"]
+guaranteed = ["GhostOrbs"]
 description = """
 - Can imitate any ghost, inheriting:
 	- Interaction/event rates
@@ -304,6 +308,7 @@ min_speed = 1.5
 max_speed = 3.71
 hunt_sanity = 50
 evidence = ["SpiritBox", "Writing", "Freezing"]
+guaranteed = ["SpiritBox"]
 description = """
 - Curses player if heard through spirit box or paramic
 - Passive sanity drain doubles when cursed
@@ -322,6 +327,7 @@ min_speed = 0.4
 max_speed = 3.0
 hunt_sanity = 40
 evidence = ["SpiritBox", "Writing", "DOTS"]
+guaranteed = ["SpiritBox"]
 description = """
 - More likely to interact with DOTS/books
 - 33% chance for unique heavy breathing through spirit box if within 1m of ghost

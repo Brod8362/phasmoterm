@@ -39,7 +39,6 @@ impl Evidence {
             Evidence::GhostOrbs => Color::Yellow,
             Evidence::Writing => Color::Blue,
             Evidence::SpiritBox => Color::Rgb(215, 95, 0),
-            _ => Color::White
         }
     }
 
@@ -51,8 +50,7 @@ impl Evidence {
             Evidence::Freezing => "Freezing Temperatures",
             Evidence::GhostOrbs => "Ghost Orbs",
             Evidence::Writing => "Ghost Writing",
-            Evidence::SpiritBox => "Spirit Box",
-            _ => "?"
+            Evidence::SpiritBox => "Spirit Box"
         }
     }
 
@@ -64,8 +62,7 @@ impl Evidence {
             Evidence::Freezing => "FZ",
             Evidence::GhostOrbs => "ORB",
             Evidence::Writing => "WR",
-            Evidence::SpiritBox => "BOX",
-            _ => "?"
+            Evidence::SpiritBox => "BOX"
         }
     }
 }

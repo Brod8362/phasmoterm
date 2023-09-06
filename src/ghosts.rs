@@ -15,12 +15,18 @@ pub struct Ghost {
     #[serde(default)]
     pub max_hunt_sanity: u32,
     pub evidence: Vec<Evidence>,
+    #[serde(default)]
+    pub guaranteed: Vec<Evidence>, //evidence that is guaranteed on nightmare/insanity
     pub description: String
 }
 
 impl Ghost {
     pub fn has_evidence(self: &Self, evidence: Evidence) -> bool {
         self.evidence.contains(&evidence)
+    }
+
+    pub fn is_guaranteed_evidence(self: &Self, evidence: Evidence) -> bool {
+        self.guaranteed.contains(&evidence)
     }
 
     pub fn render_information(self: &Self) -> Paragraph {
