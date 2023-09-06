@@ -42,8 +42,16 @@ impl SelectionState {
         self.smudge_timer = 0.0f32;
     }
 
-    pub fn selected_count(self: &Self) -> usize {
+    pub fn selected_count_raw(self: &Self) -> usize {
         self.evidences.into_iter().filter(|k| k == &MarkState::Positive).count()
+    }
+
+    pub fn selected_count(self: &Self) -> usize {
+        let mut c: u32 = self.selected_count_raw() as u32;
+        if self.mimic_possible() && self.evidences[Evidence::GhostOrbs as usize] == MarkState::Positive {
+            c = c-1; //if a mimic is possible then don't count ghost orbs as a selected item
+        }
+        u32::max(0, c) as usize
     }
 
     pub fn marked(self: &Self, evidence: Evidence) -> MarkState {
@@ -64,7 +72,9 @@ impl SelectionState {
     pub fn toggle(self: &mut Self, evidence: Evidence) {
         match self.evidences[evidence as usize] {
             MarkState::Neutral => {
-                if self.mimic_possible() || self.selected_count() < self.difficulty as usize {
+                if self.mimic_possible() && evidence == Evidence::GhostOrbs { //always allow marking mimic if its possible
+                    self.evidences[evidence as usize] = MarkState::Positive;
+                } else if self.selected_count() < self.difficulty as usize {
                     self.evidences[evidence as usize] = MarkState::Positive;
                 } else {
                     self.evidences[evidence as usize] = MarkState::Negative;
@@ -80,6 +90,11 @@ impl SelectionState {
     }
 
     pub fn possible_ghosts<'a>(self: &'a Self, ghosts: &'a Vec<Ghost>) -> Vec<&'a Ghost> {
+        //exception for mimic 
+        if self.selected_count_raw() > self.difficulty as usize && self.mimic_possible() {
+            //only mimic is possible 
+            return ghosts.iter().filter(|k| k.name == "The Mimic").collect();
+        }
         let valid: Vec<&Ghost> = ghosts.iter().filter(|ghost| {
             //check all evidences against the mark state
             for e in crate::evidence::ALL {
