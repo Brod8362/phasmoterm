@@ -242,7 +242,7 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>,
                 if state.marked(e) == MarkState::Positive {
                     s = s.bold();
                 };
-                if g.is_guaranteed_evidence(e) && state.current_difficulty() < 3 {
+                if g.is_guaranteed_evidence(e) && state.current_difficulty() < 3 && state.current_difficulty() > 0 {
                     s = s.underlined();
                 }
                 spans.push(

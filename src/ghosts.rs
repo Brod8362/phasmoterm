@@ -77,7 +77,8 @@ impl Ghost {
             Line::from(vec!["Name: ".bold(), Span::from(self.name.clone())]),
             speed_line,
             hunt_line,
-            Line::from(evidence_line)
+            Line::from(evidence_line),
+            Line::from("Properties:".bold())
         ];
         
         let mut desc: Vec<Line> = self.description.split('\n').map(|l| Line::from(l)).collect();

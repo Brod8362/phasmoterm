@@ -16,7 +16,7 @@ hunt_sanity = 50
 evidence = ["EMF","SpiritBox","DOTS"]
 description = """
 - Will never disturb a salt pile
-- Chance to teleport within 3m of a random playe,r leaving EMF 2/5
+- Chance to teleport within 3m of a random player, leaving EMF 2/5
 - No other notable behavior
 """
 
