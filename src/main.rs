@@ -167,16 +167,55 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>,
     render_evidence_table(main_layout[0], f, state, &possible_ghosts);
 
     // smudge timer
-
     let smudge_remaining = state.smudge_remaining();
 
+    let smudge_parent_layout = Layout::default()
+        .direction(Direction::Vertical)
+        .constraints(
+            [
+                Constraint::Percentage(50),
+                Constraint::Percentage(50)
+            ]
+        ).split(main_layout[1]);
+
+    let smudge_layout = Layout::default()
+        .direction(Direction::Horizontal)
+        .constraints(
+            [
+                Constraint::Percentage(50), //spirit
+                Constraint::Percentage(17), //all ghosts
+                Constraint::Percentage(8), //demon
+            ]
+        ).split(smudge_parent_layout[1]);
+
     let smudge_timer = Gauge::default()
-        .block(Block::default().title("Incense (T)imer").borders(Borders::ALL))
+        .block(Block::default().title("Incense (T)imer").borders(Borders::LEFT | Borders::RIGHT | Borders::TOP))
         .gauge_style(Style::default().fg(Color::White))
         .label(format!("{}s", smudge_remaining))
         .percent(f64::round(smudge_remaining as f64/180.0*100.0) as u16);
 
-    f.render_widget(smudge_timer, main_layout[1]);
+    f.render_widget(smudge_timer, smudge_parent_layout[0]);
+
+    let smudge_points = [
+        ("┕ Spirit", Color::Cyan),
+        ("┕ Default", Color::Yellow),
+        ("┕ Demon", Color::Red)
+    ];
+    for i in 0..smudge_points.len() {
+        let borders = match i {
+            0 => Borders::LEFT | Borders::BOTTOM,
+            1 => Borders::BOTTOM,
+            2 => Borders::RIGHT | Borders::BOTTOM,
+            _ => Borders::NONE
+        };
+        f.render_widget(
+            Paragraph::new(
+                Span::from(smudge_points[i].0)
+                .fg(smudge_points[i].1)
+            ).block(Block::default().borders(borders)), 
+            smudge_layout[i]
+        );
+    }
 
     //render ghost info
 
