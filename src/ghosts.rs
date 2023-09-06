@@ -64,10 +64,13 @@ impl Ghost {
         let mut evidence_line: Vec<Span> = Vec::new();
         evidence_line.push("Evidence: ".bold());
         for e in &self.evidence {
-            let mut string = String::from(e.name());
-            string.push(' ');
-            let span = Span::from(string).bold().fg(e.color());
+            let string = String::from(e.name());
+            let mut span = Span::from(string).bold().fg(e.color());
+            if self.is_guaranteed_evidence(*e) {
+                span = span.underlined();
+            }
             evidence_line.push(span);
+            evidence_line.push(Span::from(" "));
         }
 
         let mut lines = vec![

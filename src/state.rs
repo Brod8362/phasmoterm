@@ -104,10 +104,17 @@ impl SelectionState {
                         return false;
                     }
                 }
-                if mark_state == MarkState::Negative && self.difficulty == 3 {
-                    if ghost.has_evidence(e) {
-                        return false;
+                if mark_state == MarkState::Negative { //when marked a missing
+                    if self.difficulty == 3 {
+                        if ghost.has_evidence(e) {
+                            return false;
+                        }
+                    } else if self.difficulty > 0 { //only rule out guaranteed evidences
+                        if ghost.is_guaranteed_evidence(e) {
+                            return false;
+                        }
                     }
+                    
                 }
             }
             true
