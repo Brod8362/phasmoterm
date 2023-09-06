@@ -53,6 +53,8 @@ fn main() -> Result<(), io::Error> {
         return Ok(());
     }
 
+    ghosts.sort_by_key(|k| k.name.clone()); 
+
     // setup terminal
     enable_raw_mode()?;
     let mut stdout = io::stdout();
