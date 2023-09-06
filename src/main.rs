@@ -24,7 +24,7 @@ struct GhostDocument {
 }
 
 fn main() -> Result<(), io::Error> {
-    let ghost_file_paths = ["./ghosts.toml"];
+    let ghost_file_paths = ["./ghosts.toml", "/etc/phasmoterm/ghosts.toml"];
 
     let mut ghosts: Vec<Ghost> = Vec::new();
 
