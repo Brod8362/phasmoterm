@@ -78,7 +78,8 @@ fn main() -> Result<(), io::Error> {
         time = now;
 
         if let Ok(true) = event::poll(Duration::from_secs_f32(0.5)) {
-            if let Event::Key(key) = event::read()? {
+            let event = event::read()?;
+            if let Event::Key(key) = event {
                 match key.code {
                     KeyCode::Char('q') => break,
                     KeyCode::Char('e') => state.toggle(Evidence::EMF),
@@ -91,30 +92,22 @@ fn main() -> Result<(), io::Error> {
                     KeyCode::Char('i') => state.next_difficulty(),
                     KeyCode::Char('t') => state.start_smudge(),
                     KeyCode::Char('r') => state.reset(),
-                    KeyCode::Down => {
-                        match list_state.selected() {
-                            Some(s) => list_state.select(Some(s+1)),
-                            _ => list_state.select(Some(0))
-                        }
-                    },
-                    KeyCode::PageDown => {
-                        match list_state.selected() {
-                            Some(s) => list_state.select(Some(s+10)),
-                            _ => list_state.select(Some(0))
-                        }
-                    },
-                    KeyCode::Up => {
-                        match list_state.selected() {
-                            Some(s) if s > 0 => list_state.select(Some(s-1)),
-                            _ => list_state.select(Some(0))
-                        }
-                    },
-                    KeyCode::PageUp => {
-                        match list_state.selected() {
-                            Some(s) if s >= 10 => list_state.select(Some(s-10)),
-                            _ => list_state.select(Some(0))
-                        }
-                    },
+                    KeyCode::Down => list_scroll_by(&mut list_state, 1),
+                    KeyCode::PageDown => list_scroll_by(&mut list_state, 10),
+                    KeyCode::Up => list_scroll_by(&mut list_state, -1),
+                    KeyCode::PageUp => list_scroll_by(&mut list_state, -10),
+                    _ => {}
+                }
+            }
+
+            if let Event::Mouse(mouse_event) = event {
+                match mouse_event.kind {
+                    event::MouseEventKind::ScrollDown => {
+                        list_scroll_by(&mut list_state, 1)
+                    }
+                    event::MouseEventKind::ScrollUp => {
+                        list_scroll_by(&mut list_state, -1)
+                    }
                     _ => {}
                 }
             }
@@ -132,6 +125,16 @@ fn main() -> Result<(), io::Error> {
     terminal.show_cursor()?;
 
     Ok(())
+}
+
+fn list_scroll_by(list_state: &mut ListState, amount: i32) {
+    match list_state.selected() {
+        Some(s) => {
+            let pos = i32::max(0, (s as i32) + amount);
+            list_state.select(Some(pos as usize))
+        },
+        _ => list_state.select(Some(0))
+    }
 }
 
 fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>, list_state: &mut ListState) {
