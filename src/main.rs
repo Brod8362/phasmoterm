@@ -3,7 +3,7 @@ pub mod ghosts;
 pub mod state;
 pub mod util;
 
-use std::{io, fs, collections::HashMap, time::{SystemTime, Duration}};
+use std::{io, fs, collections::HashMap, time::{SystemTime, Duration}, borrow::BorrowMut};
 use evidence::Evidence;
 use ghosts::Ghost;
 use ratatui::{
@@ -102,6 +102,20 @@ fn main() -> Result<(), io::Error> {
                     KeyCode::Up => list_scroll_by(&mut list_state, -1),
                     KeyCode::BackTab => list_scroll_by(&mut list_state, -1),
                     KeyCode::PageUp => list_scroll_by(&mut list_state, -10),
+                    KeyCode::Delete => {
+                        
+                        if let Some(index) = list_state.selected() {
+                            let ghost_opt = {
+                                //re-calculating this is bleh
+                                let possible_ghosts = state.possible_ghosts(&ghosts);
+                                possible_ghosts.get(index).map(|k| (*k).clone())
+                            };
+                            
+                            if let Some(ghost) = ghost_opt {
+                                state.toggle_omit(&ghost);
+                            }
+                        }
+                    },
                     _ => {}
                 }
             }
@@ -272,6 +286,9 @@ fn ui<B: Backend>(f: &mut Frame<B>, state: &SelectionState, ghosts: &Vec<Ghost>,
                 spans.push(Span::from(" - "));
                 spans.push(Span::from(format!("{}%", g.max_hunt_sanity)).fg(max_color));
             };
+            if state.is_omitted(&g) {
+                spans = spans.into_iter().map(|k| k.bg(Color::DarkGray)).collect();
+            }
             ListItem::new(Line::from(spans))
         })
         .collect();

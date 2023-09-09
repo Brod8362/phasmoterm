@@ -9,6 +9,7 @@ pub enum MarkState {
 
 pub struct SelectionState {
     evidences: [MarkState; 7],
+    omitted_ghosts: Vec<String>,
     difficulty: u32,
     smudge_timer: f32
 }
@@ -27,7 +28,8 @@ impl SelectionState {
         Self {
             evidences: states,
             difficulty: 3,
-            smudge_timer: 0f32
+            smudge_timer: 0f32,
+            omitted_ghosts: Vec::new()
         }
     }
 
@@ -40,6 +42,7 @@ impl SelectionState {
         self.evidences[Evidence::Writing as usize] = MarkState::Neutral;
         self.evidences[Evidence::SpiritBox as usize] = MarkState::Neutral;
         self.smudge_timer = 0.0f32;
+        self.omitted_ghosts.clear();
     }
 
     pub fn selected_count_raw(self: &Self) -> usize {
@@ -151,5 +154,20 @@ impl SelectionState {
     
     pub fn smudge_remaining(self: &Self) -> u32 {
         f32::round(self.smudge_timer) as u32
+    }
+
+    // omit
+
+    pub fn toggle_omit<'a>(self: &'a mut Self, ghost: &'a Ghost) {
+        if self.is_omitted(ghost) {
+            //remove from omitted list
+            self.omitted_ghosts.retain(|g| *g != ghost.name);
+        } else {
+            self.omitted_ghosts.push(ghost.name.clone());
+        }
+    }
+
+    pub fn is_omitted(self: &Self, ghost: &Ghost) -> bool {
+        self.omitted_ghosts.iter().any(|g| g == &ghost.name)
     }
 }
